@@ -178,6 +178,15 @@ function draw(gl)
     ////////////// Begin: draw the rotating green triangle
     transformMat.setIdentity(); //set identity matrix to transformMat
     ///******TODO: you can multiple transformMat.translate() and transformMat.rotate() to make the rotating grenn triangle
+    pointAngle++; // Increment rotation angle for animation
+
+    // Step 1: Move the triangle to follow the red point
+    transformMat.rotate(pointAngle, 0, 0, 1); // Rotate around the center
+    transformMat.translate(0, 0.4, 0); // Move to the red point's location
+
+    // Step 2: Rotate the triangle around the red point, keeping the tip fixed
+    transformMat.rotate(triangleAngle, 0, 0, 1); // Rotate around its own axis
+    triangleAngle += 2; // Increment triangle rotation angle
 
     
     //Note: You are NOT Allowed to change the following code
