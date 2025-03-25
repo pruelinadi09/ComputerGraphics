@@ -71,10 +71,9 @@ function main(){
 
 function keydown(ev){ //you may want to define more arguments for this function
     //implment keydown event here
-
-    if(ev.key == 'r'){ //an example for user press 'r'... 
-        //......  
-    }
+    let key = ev.key.toLowerCase();
+    if ('phtqvc'.includes(key)) shapeFlag = key;
+    if ('rgb'.includes(key)) colorFlag = key;
 }
 
 function click(ev){ //you may want to define more arguments for this function
