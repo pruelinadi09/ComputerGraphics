@@ -86,6 +86,30 @@ function click(ev){ //you may want to define more arguments for this function
     y = (canvas.width/2 - (y - rect.top))/(canvas.height/2)
 
     //you might want to do something here
+    var color = colors[colorFlag];
+
+    if (shapes[shapeFlag].length >= 5) shapes[shapeFlag].shift();
+
+    switch (shapeFlag) {
+        case 'p':
+            shapes.p.push({ x, y, color });
+            break;
+        case 'h':
+            shapes.h.push({ x1: -0.1 + x, x2: 0.1 + x, y, color });
+            break;
+        case 'v':
+            shapes.v.push({ x, y1: y - 0.1, y2: y + 0.1, color });
+            break;
+        case 't':
+            shapes.t.push({ x, y, color });
+            break;
+        case 'q':
+            shapes.q.push({ x, y, color });
+            break;
+        case 'c':
+            shapes.c.push({ x, y, color });
+            break;
+    }
 
     //self-define draw() function
     //I suggest that you can clear the canvas
