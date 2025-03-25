@@ -9,6 +9,7 @@ var VSHADER_SOURCE = `
     varying vec4 v_Color;
     void main() {
         gl_Position = a_Position;
+        gl_PointSize = 3.0;
         v_Color = a_Color;
     }
 `;
@@ -43,9 +44,9 @@ var colors = {
 
 function main(){
     //////Get the canvas context
-    var canvas = document.getElementById('webgl');
+    canvas = document.getElementById('webgl');
     //var gl = canvas.getContext('webgl') || canvas.getContext('exprimental-webgl') ;
-    var gl = canvas.getContext('webgl2');
+    gl = canvas.getContext('webgl');
     if(!gl){
         console.log('Failed to get the rendering context for WebGL');
         return ;
