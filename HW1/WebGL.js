@@ -34,6 +34,11 @@ var gl, canvas, a_Position, a_Color, u_FragColor;
 var shapes = {
     p: [], h: [], v: [], t: [], q: [], c: []
 };
+var colors = {
+    r: [1.0, 0.0, 0.0, 1.0],
+    g: [0.0, 1.0, 0.0, 1.0],
+    b: [0.0, 0.0, 1.0, 1.0]
+};
 
 
 function main(){
