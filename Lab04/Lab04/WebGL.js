@@ -212,6 +212,10 @@ function main(){
             ///// TODO: when the user press 'g' or 'G'
             /////       1. consider whether the triangle corner and the circle touch each other
             /////       2. consider if the circle be grabbed by the triangle corner
+            if (canGrab) {
+                console.log("Grabbing circle!");
+                grab = true; // Set flag for grabbing
+            }
             draw(gl)
         }
     });
@@ -260,10 +264,41 @@ function draw(gl)
     ////triangle corner coordinate in world space
     const triangleCornerWorld = transformMat.multiplyVector4(new Vector4(triangleVerticesB.slice(3, 6).concat(1)));
     ////TODO1: circle coordinate in world space
-    transformMat = new Matrix4(transformMatCircle1)
+    transformMat = new Matrix4(transformMatCircle1);
+    const circleWorld = transformMat.multiplyVector4(transformMatCircle1);
+    console.log(circleWorld);
     ////TODO2: check whether the triangle corner and the circle touch each other
+    const dx = triangleCornerWorld.elements[0] - circleVertices[0];
+    const dy = triangleCornerWorld.elements[1] - circleVertices[1];
+
+    const distanceSquared = dx * dx + dy * dy;
+    const radiusSquared = circleRadius * circleRadius; // Assume circleRadius is defined
+
+    console.log(canGrab);
+    console.log(distanceSquared);
+    console.log(radiusSquared);
+
+    if (distanceSquared <= radiusSquared) {
+        console.log("Touch detected!");
+        canGrab = true;
+    } else {
+        canGrab = false;
+    }
+
     ///////TODO2-hint: (x1-x2)^2 + (y1-y2)^2 <= r^2
     ////TODO3: different interaction processes for the circle and the triangle corner, there are three cases
+    if (grab) {
+        circleCenter[0] = triangleCornerWorld.elements[0];
+        circleCenter[1] = triangleCornerWorld.elements[1];
+    }
+
+    if (canGrab && !grab) {
+        circleColor = circleColorsTouch; // when touching but not grabbing
+    } else if (grab) {
+        circleColor = circleColorsGrab; // when grabbed
+    } else {
+        circleColor = circleColors; // Default
+    }
 
     initAttributeVariable(gl, program.a_Position, circleModel.vertexBuffer);//set circle  vertex to shader varibale
     initAttributeVariable(gl, program.a_Color, circleModel.colorBuffer); //set circle normal color to shader varibale
