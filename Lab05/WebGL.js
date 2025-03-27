@@ -264,7 +264,13 @@ function draw(x, y){
     modelMatrix1.translate(0, 0, 0);
 
     //this only draw one set of triangles because we pass "null" for the last argument
-    drawOneViewport(gl, 0, 0, canvas.width, canvas.height,
-                    0, 0, 0,
+    drawOneViewport(gl, 0, 200, canvas.width, 0.5* canvas.height,
+                    0.8, 0.8, 0.8,
                     pespProjMatrix, frontViewMatrix, modelMatrix1, null );
+    drawOneViewport(gl, 0, 0, 0.5 * canvas.width, 0.5 * canvas.height,
+        0, 0, 0,
+        pespProjMatrix, frontViewMatrix, modelMatrix1, null );
+    drawOneViewport(gl, 200, 0, 0.5 * canvas.width, 0.5 * canvas.height,
+        0.3, 0.3, 0.3,
+        pespProjMatrix, frontViewMatrix, modelMatrix1, null );
 }
