@@ -113,9 +113,15 @@ gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 const colorLocation = gl.getUniformLocation(program, "u_color");
 const matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
+let offsetX = 0, offsetY = 0, scale = 1, legSpread = 0.5;
+
 function drawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT);
-    const matrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    const matrix = [
+        scale, 0, 0,
+        0, scale, 0,
+        offsetX, offsetY, 1
+    ];
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
     let partCount = 0;
@@ -139,3 +145,38 @@ function drawScene() {
 
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
 drawScene();
+
+// Control functions
+function moveLeft() {
+    offsetX -= 0.05;
+    drawScene();
+}
+function moveRight() {
+    offsetX += 0.05;
+    drawScene();
+}
+function moveUp() {
+    offsetY += 0.05;
+    drawScene();
+}
+function moveDown() {
+    offsetY -= 0.05;
+    drawScene();
+}
+function setScale(val) {
+    scale = parseFloat(val);
+    drawScene();
+}
+function rotateLeftArm() {
+    alert("Left arm rotation not implemented in this basic version.");
+}
+function rotateRightArm() {
+    alert("Right arm rotation not implemented in this basic version.");
+}
+function rotateHead() {
+    alert("Head rotation not implemented in this basic version.");
+}
+function setLegSpread(val) {
+    legSpread = parseFloat(val);
+    alert("Leg spread not implemented visually in this basic version.");
+}
