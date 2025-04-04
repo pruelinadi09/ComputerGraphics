@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Robot Control</title>
+    <style>
+        body { text-align: center; background-color: #222; color: white; }
+        canvas { border: 1px solid white; }
+        .controls { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
+        .slider-group { display: flex; flex-direction: column; align-items: center; }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas" width="600" height="600"></canvas>
+    <div class="controls">
+        <div style="margin-top: 35px;">
+            <button onclick="moveUp()">Up</button><br>
+            <button onclick="moveLeft()">Left</button>
+            <button onclick="moveDown()">Down</button>
+            <button onclick="moveRight()">Right</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; flex-direction: column; justify-content: center; gap: 3px;">
+            <button onclick="rotateLeftArm()">Rotate Left Arm</button><br>
+            <button onclick="rotateRightArm()">Rotate Right Arm</button><br>
+            <button onclick="rotateHead()">Rotate Head</button>
+        </div>
+        <div>
+            <div class="slider-group">
+                <label for="scaleSlider">Robot Size</label>
+                <input type="range" id="scaleSlider" min="0.5" max="2" step="0.1" value="1" onchange="setScale(this.value)">
+            </div><br>
+            <div class="slider-group">
+                <label for="legSpreadSlider">Leg Spread</label>
+                <input type="range" id="legSpreadSlider" min="0" max="1" step="0.1" value="0.5" onchange="setLegSpread(this.value)">
+            </div>
+        </div>
+    </div>
+    <script src="WebGL.js"></script>
+</body>
+</html>
