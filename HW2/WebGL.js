@@ -89,8 +89,8 @@ const robotParts = {
         0.02, -0.3, 0.07, -0.3, 0.07, -0.5,
         0.02, -0.3, 0.07, -0.5, 0.02, -0.5,
     ],
-    leftShoulder: createCircleVertices(-0.15, 0.2, 0.06),
-    rightShoulder: createCircleVertices(0.15, 0.2, 0.06)
+    leftHand: createCircleVertices(0.15, -0.19, 0.05),
+    rightHand: createCircleVertices(-0.15, -0.19, 0.05)
 };
 
 const positions = [].concat(
@@ -100,8 +100,8 @@ const positions = [].concat(
     robotParts.rightArm,
     robotParts.leftLeg,
     robotParts.rightLeg,
-    robotParts.leftShoulder,
-    robotParts.rightShoulder
+    robotParts.rightHand,
+    robotParts.leftHand
 );
 
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
@@ -138,8 +138,8 @@ function drawScene() {
     drawPart(6, [0.8, 0.2, 0.2, 1.0]); // Right Arm
     drawPart(6, [0.2, 0.8, 0.2, 1.0]); // Left Leg
     drawPart(6, [0.2, 0.8, 0.2, 1.0]); // Right Leg
-    drawPart(robotParts.leftShoulder.length / 2, [1.0, 1.0, 0.0, 1.0]); // Left Shoulder (circle)
-    drawPart(robotParts.rightShoulder.length / 2, [1.0, 1.0, 0.0, 1.0]); // Right Shoulder (circle)
+    drawPart(robotParts.rightHand.length / 2, [1.0, 1.0, 0.0, 1.0]);
+    drawPart(robotParts.leftHand.length / 2, [1.0, 1.0, 0.0, 1.0]);
 }
 
 
