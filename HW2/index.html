@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -31,10 +31,47 @@
                 <input type="range" id="scaleSlider" min="0.5" max="2" step="0.1" value="1" onchange="setScale(this.value)">
             </div><br>
             <div class="slider-group">
-                <label for="legSpreadSlider">Leg Spread</label>
+                <label for="ballRotateSlider">Rotate Rod</label>
                 <input type="range" id="legSpreadSlider" min="0" max="1" step="0.1" value="0.5" onchange="setLegSpread(this.value)">
             </div>
         </div>
+    </div>
+    <script src="WebGL.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL Robot with Fishing Rod</title>
+    <style>
+        canvas { background-color: #000; display: block; margin: auto; }
+        .controls {
+            text-align: center;
+            margin-top: 10px;
+        }
+        button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas" width="800" height="600"></canvas>
+    <div class="controls">
+        <button onclick="moveLeft()">← Move Left</button>
+        <button onclick="moveRight()">→ Move Right</button>
+        <button onclick="moveUp()">↑ Move Up</button>
+        <button onclick="moveDown()">↓ Move Down</button>
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <br>
+        <button onclick="rotateRod(0, -0.1)">Rod 1 -</button>
+        <button onclick="rotateRod(0, 0.1)">Rod 1 +</button>
+        <button onclick="rotateRod(1, -0.1)">Rod 2 -</button>
+        <button onclick="rotateRod(1, 0.1)">Rod 2 +</button>
+        <button onclick="rotateRod(2, -0.1)">Rod 3 -</button>
+        <button onclick="rotateRod(2, 0.1)">Rod 3 +</button>
     </div>
     <script src="WebGL.js"></script>
 </body>
