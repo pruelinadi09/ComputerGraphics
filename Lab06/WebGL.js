@@ -10,10 +10,18 @@ var VSHADER_SOURCE = `
     varying vec4 v_Color;
     void main(){
         //TODO-1: transform "a_Position" to clip space and store in "gl_Position"
+        gl_Position = u_MvpMatrix * a_Position;
+
         //TODO-2: transform "a_Position" to world space and store its first three elements to "v_PositionInWorld"
+        vec4 positionInWorld = u_modelMatrix * a_Position;
+        v_PositionInWorld = positionInWorld.xyz;
+
         //TODO-3: transform normal vector "a_Normal" to world space using "u_normalMatrix" and store the result in "v_Normal", 
         //        remember to renormalize the result before storing it to v_Normal
+        v_Normal = normalize((u_normalMatrix * a_Normal).xyz);
+
         //TODO-4: set "a_Color" to "v_Color"
+        v_Color = a_Color;
     }    
 `;
 
@@ -37,22 +45,29 @@ var FSHADER_SOURCE = `
         vec3 specularLightColor = vec3(1.0, 1.0, 1.0);        
 
         //TODO-5: calculate ambient light color using "ambientLightColor" and "u_Ka"
-        
+        vec3 ambient = u_Ka * ambientLightColor;
         
         vec3 normal = normalize(v_Normal); //normalize the v_Normal before using it, before it comes from normal vectors interpolation
+        vec3 lightDir = normalize(u_LightPosition - v_PositionInWorld);
+
         //TODO-6: calculate diffuse light color using "normal", "u_LightPosition", "v_PositionInWorld", "diffuseLightColor", and "u_Kd"
-        
+        float nDotL = max(dot(normal, lightDir), 0.0);
+        vec3 diffuse = u_Kd * diffuseLightColor * nDotL;
         
         vec3 specular = vec3(0.0, 0.0, 0.0); 
         if(nDotL > 0.0) {
             //TODO-7: calculate specular light color using "normal", "u_LightPosition", "v_PositionInWorld", 
             //       "u_ViewPosition", "u_shininess", "specularLightColor", and "u_Ks"
             //   You probably can store the result of specular calculation into "specular" variable
-            
+            vec3 viewDir = normalize(u_ViewPosition - v_PositionInWorld);
+            vec3 reflectDir = reflect(-lightDir, normal);
+            float specAngle = max(dot(viewDir, reflectDir), 0.0);
+            specular = u_Ks * specularLightColor * pow(specAngle, u_shininess);
         }
 
         //TODO-8: sum up ambient, diffuse, specular light color from above calculation and put them into "gl_FragColor"
-        gl_FragColor = ???
+        vec3 finalColor = ambient + diffuse + specular;
+        gl_FragColor = vec4(finalColor, v_Color.a);
     }
 `;
 
