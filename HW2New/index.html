@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebGL Robot Grabber</title>
+  <style>
+    canvas { border: 1px solid black; }
+    #controls {
+      display: flex;
+      flex-direction: column;
+      max-width: 300px;
+    }
+    .control-group {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="glcanvas" width="800" height="600"></canvas>
+  <div id="controls">
+    <div class="control-group">
+      <label>Move Robot X: <input type="range" id="robotX" min="-300" max="300" value="0"></label>
+    </div>
+    <div class="control-group">
+      <label>Move Robot Y: <input type="range" id="robotY" min="-200" max="200" value="0"></label>
+    </div>
+    <div class="control-group">
+      <label>Joint1 Rotation: <input type="range" id="joint1" min="-90" max="90" value="0"></label>
+    </div>
+    <div class="control-group">
+      <label>Joint2 Rotation: <input type="range" id="joint2" min="-90" max="90" value="0"></label>
+    </div>
+    <div class="control-group">
+      <label>Joint3 Rotation: <input type="range" id="joint3" min="-90" max="90" value="0"></label>
+    </div>
+    <div class="control-group">
+      <button id="grabBtn">Grab</button>
+      <button id="releaseBtn">Release</button>
+    </div>
+    <div class="control-group">
+        <button id="zoomIn">Zoom In</button>
+        <button id="zoomOut">Zoom Out</button>
+      </div>
+  </div>
+  <script src="WebGL.js"></script>
+</body>
+</html>
