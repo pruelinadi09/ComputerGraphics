@@ -231,13 +231,31 @@ async function main(){
     ////cube
     //TODO-1: create vertices for the cube whose edge length is 2.0 (or 1.0 is also fine)
     //F: Face, T: Triangle, V: vertex (XYZ)
-    cubeVertices = [//F1_T1_V1,  F1_T1_V2,  F1_T1_V3,  F1_T2_V4,  F1_T2_V5,  F1_T2_V6,   //this row for the face z = 1.0
-                    //F2_T1_V1,  F2_T1_V2,  F2_T1_V3,  F2_T2_V4,  F2_T2_V5,  F2_T2_V6,   //this row for the face x = 1.0
-                    //F3_T1_V1,  F3_T1_V2,  F3_T1_V3,  F3_T2_V4,  F3_T2_V5,  F3_T2_V6,   //this row for the face y = 1.0
-                    //F4_T1_V1,  F4_T1_V2,  F4_T1_V3,  F4_T2_V4,  F4_T2_V5,  F4_T2_V6,   //this row for the face x = -1.0
-                    //F5_T1_V1,  F5_T1_V2,  F5_T1_V3,  F5_T2_V4,  F5_T2_V5,  F5_T2_V6,   //this row for the face y = -1.0
-                    //F6_T1_V1,  F6_T1_V2,  F6_T1_V3,  F6_T2_V4,  F6_T2_V5,  F6_T2_V6,   //this row for the face z = -1.0
-                  ]
+    cubeVertices = [
+      // Front face (z = 1.0)
+      -1.0, -0.1,  1.0,   1.0, -0.1,  1.0,   1.0,  0.1,  1.0,
+      -1.0, -0.1,  1.0,   1.0,  0.1,  1.0,  -1.0,  0.1,  1.0,
+
+      // Right face (x = 1.0)
+      1.0, -0.1,  1.0,   1.0, -0.1, -1.0,   1.0,  0.1, -1.0,
+      1.0, -0.1,  1.0,   1.0,  0.1, -1.0,   1.0,  0.1,  1.0,
+
+      // Top face (y = 1.0)
+      -1.0,  0.1,  1.0,   1.0,  0.1,  1.0,   1.0,  0.1, -1.0,
+      -1.0,  0.1,  1.0,   1.0,  0.1, -1.0,  -1.0,  0.1, -1.0,
+
+      // Left face (x = -1.0)
+      -1.0, -0.1, -1.0,  -1.0, -0.1,  1.0,  -1.0,  0.1,  1.0,
+      -1.0, -0.1, -1.0,  -1.0,  0.1,  1.0,  -1.0,  0.1, -1.0,
+
+      // Bottom face (y = -1.0)
+      -1.0, -0.1, -1.0,   1.0, -0.1, -1.0,   1.0, -0.1,  1.0,
+      -1.0, -0.1, -1.0,   1.0, -0.1,  1.0,  -1.0, -0.1,  1.0,
+
+      // Back face (z = -1.0)
+      1.0, -0.1, -1.0,  -1.0, -0.1, -1.0,  -1.0,  0.1, -1.0,
+      1.0, -0.1, -1.0,  -1.0,  0.1, -1.0,   1.0,  0.1, -1.0,
+    ];
     cubeNormals = getNormalOnVertices(cubeVertices);
     let o = initVertexBufferForLaterUse(gl, cubeVertices, cubeNormals, null);
     cube.push(o);
