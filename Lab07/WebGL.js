@@ -175,7 +175,7 @@ var cameraX = 3, cameraY = 3, cameraZ = 7;
 var mario = [];
 var sonic = [];
 var cube = [];
-var moveDistance = 0;
+var moveDistance = 0.5;
 var rotateAngle = 0;
 
 
@@ -295,15 +295,23 @@ function draw(){
 
     //Cube (ground)
     //TODO-1: set mdlMatrix for the cube
+    // mdlMatrix.setScale(10.0, 0.2, 10.0);
     drawOneObject(cube, mdlMatrix, 1.0, 0.4, 0.4);
 
     //mario
     //TODO-2: set mdlMatrix for mario
-    //drawOneObject(mario, mdlMatrix, 0.4, 1.0, 0.4);
+    mdlMatrix = new Matrix4();
+    mdlMatrix.setTranslate(-0.5, 0.5, -0.5);
+    mdlMatrix.scale(0.006, 0.006, 0.006);
+    drawOneObject(mario, mdlMatrix, 0.4, 1.0, 0.4);
 
     //sonic
     //TODO-3: set mdlMatrix for sonic (include rotation and movement)
-    //drawOneObject(sonic, mdlMatrix, 0.4, 0.4, 1.0);
+    mdlMatrix = new Matrix4();
+    mdlMatrix.setTranslate(moveDistance, 0.1, 0.2);
+    mdlMatrix.rotate(rotateAngle, 0, 1, 0); 
+    mdlMatrix.scale(0.03, 0.03, 0.03);
+    drawOneObject(sonic, mdlMatrix, 0.4, 0.4, 1.0);
 }
 
 //obj: the object components
