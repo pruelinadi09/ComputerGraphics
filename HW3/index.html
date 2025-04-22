@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebGL Robot Scene</title>
+  <style>
+    #controls { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px; }
+    #controls label, #controls input { display: block; margin: 5px 0; }
+  </style>
+</head>
+<body onload="main()">
+  <canvas id="webgl" width = "800" height = "800"></canvas>
+  <!-- <div id="controls">
+    <label>Zoom
+      <input type="range" id="zoom" min="-30" max="30" value="0">
+    </label>
+    <label>Robot X
+      <input type="range" id="robotX" min="-10" max="10" value="0">
+    </label>
+    <label>Joint 1 Angle
+      <input type="range" id="joint1" min="-180" max="180" value="0">
+    </label>
+    <label>Joint 2 Angle
+      <input type="range" id="joint2" min="-180" max="180" value="0">
+    </label>
+    <label>Joint 3 Angle
+      <input type="range" id="joint3" min="-180" max="180" value="0">
+    </label>
+    <button id="grabBtn">Grab / Release</button>
+  </div> -->
+  <script src="cuon-matrix.js"></script>
+  <script src="WebGL.js"></script>
+</body>
+</html>
