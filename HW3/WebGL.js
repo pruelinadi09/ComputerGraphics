@@ -243,9 +243,9 @@ async function main()
 
     draw();
 
-    canvas.onmousedown = function(ev){mouseDown(ev)};
-    canvas.onmousemove = function(ev){mouseMove(ev)};
-    canvas.onmouseup = function(ev){mouseUp(ev)};
+    // canvas.onmousedown = function(ev){mouseDown(ev)};
+    // canvas.onmousemove = function(ev){mouseMove(ev)};
+    // canvas.onmouseup = function(ev){mouseUp(ev)};
 
     // var slider1 = document.getElementById("move");
     // slider1.oninput = function() {
@@ -270,10 +270,8 @@ function draw()
     let mdlMatrix = new Matrix4(); //model matrix of objects
 
     //Cube (ground)
-    // mdlMatrix.setScale(10.0, 0.2, 10.0);
-    mdlMatrix.setRotate(-15, 1, 0, 0);
-    mdlMatrix.rotate(-70, 0, 1, 0);   
-    mdlMatrix.rotate(-3, 0, 0, 1);
+    mdlMatrix.setTranslate(0.0, -0.5, 0.0);
+    mdlMatrix.scale(1.0, 0.5, 1.0);
     drawOneObject(cube, mdlMatrix, 1.0, 0.4, 0.4);
 }
 
