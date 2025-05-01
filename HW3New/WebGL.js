@@ -40,6 +40,10 @@ let zoom = 1;
 let joint1Angle = 0;
 let joint2Angle = 0;
 let joint3Angle = 0;
+let objX = 0;
+let objY = 0;
+let obj2Angle = 0;
+let obj3Angle = 0;
 
 function main() {
     const canvas = document.getElementById("glcanvas");
@@ -171,26 +175,22 @@ function main() {
         mat4.translate(arm3, arm3, [1.1, 0, 0]);
         drawCube(gl, arm3, lightPos);
 
-        // mat4.translate(arm1, arm1, [1.7, 1.7, 0]);
-        // mat4.rotateZ(arm1, arm1, joint1Angle);
-        // mat4.translate(arm1, arm1, [1.2, 0.0, 0]);
-        // mat4.scale(arm1, arm1, [1, 0.3, 0.3]);
-
         //================= Object (3 parts connected) =================
-        // const obj1 = mat4.clone(view);
-        // mat4.translate(obj1, obj1, [3, 0.5, 0]);
-        // mat4.scale(obj1, obj1, [1, 1, 1]);
-        // drawCube(gl, obj1, lightPos);
+        const obj1 = mat4.clone(view);
+        mat4.translate(obj1, obj1, [objX+5, objY, 5]);
+        drawCube(gl, obj1, lightPos);
 
-        // const obj2 = mat4.clone(view);
-        // mat4.translate(obj2, obj2, [3, 2, 0]);
-        // mat4.scale(obj2, obj2, [0.7, 1, 0.5]);
-        // drawCube(gl, obj2, lightPos);
+        const obj2 = mat4.clone(obj1);
+        mat4.translate(obj2, obj2, [0, 1.7, 0]);
+        mat4.scale(obj2, obj2, [0.7, 0.7, 0.5]);
+        mat4.rotateY(obj2, obj2, obj2Angle);
+        drawCube(gl, obj2, lightPos);
 
-        // const obj3 = mat4.clone(view);
-        // mat4.translate(obj3, obj3, [3, 3.5, 0]);
-        // mat4.scale(obj3, obj3, [0.5, 0.5, 0.5]);
-        // drawCube(gl, obj3, lightPos);
+        const obj3 = mat4.clone(obj2);
+        mat4.translate(obj3, obj3, [0, 1.6, 0]);
+        mat4.scale(obj3, obj3, [0.5, 0.5, 0.5]);
+        mat4.rotateY(obj3, obj3, obj3Angle);
+        drawCube(gl, obj3, lightPos);
 
         requestAnimationFrame(render);
     }
@@ -274,9 +274,11 @@ function createCube(gl) {
 function setupUI() {
     document.getElementById("robotX").oninput = e => { carX = parseInt(e.target.value); main(); };
     document.getElementById("robotY").oninput = e => { carY = parseInt(e.target.value); main(); };
-    document.getElementById("joint1").oninput = e => { joint1Angle = parseInt(e.target.value); main(); console.log(joint1Angle);};
+    document.getElementById("joint1").oninput = e => { joint1Angle = parseInt(e.target.value); main();};
     document.getElementById("joint2").oninput = e => { joint2Angle = parseInt(e.target.value); main(); };
     document.getElementById("joint3").oninput = e => { joint3Angle = parseInt(e.target.value); main(); };
+    document.getElementById("obj2").oninput = e => { obj2Angle = parseInt(e.target.value); main(); };
+    document.getElementById("obj3").oninput = e => { obj3Angle = parseInt(e.target.value); main(); };
     document.getElementById("grabBtn").onclick = () => { grabbed = true; main(); };
     document.getElementById("releaseBtn").onclick = () => { grabbed = false; main(); };
     document.getElementById("zoomIn").onclick = () => { zoom *= 1.1; main(); };
