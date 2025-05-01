@@ -141,38 +141,43 @@ function main() {
         mat4.rotateZ(joint1, joint1, joint1Angle);
         drawCube(gl,joint1, lightPos);
 
-        const arm1 = mat4.clone(carBase);
+        let arm1 = mat4.clone(carBase);
         mat4.translate(arm1, arm1, [1.7, 1.7, 0]);
         mat4.rotateZ(arm1, arm1, joint1Angle);
         mat4.translate(arm1, arm1, [1.2, 0.0, 0]);
+        const arm1bk = mat4.clone(arm1);
         mat4.scale(arm1, arm1, [1, 0.3, 0.3]);
         drawCube(gl, arm1, lightPos);
+        arm1 = mat4.clone(arm1bk);
 
         // Joint 2 - Arm segment 2
         const joint2 = mat4.clone(arm1);
         mat4.translate(joint2, joint2, [1.2, 0, 0]);
-        mat4.scale(joint2, joint2, [0.2, 0.6, 1]);
+        mat4.scale(joint2, joint2, [0.2, 0.2, 0.3]);
         mat4.rotateZ(joint2, joint2, joint2Angle);
         drawCube(gl,joint2, lightPos);
 
-        const arm2 = mat4.clone(arm1);
+        let arm2 = mat4.clone(arm1);
         mat4.translate(arm2, arm2, [1.2, 0, 0]);
         mat4.rotateZ(arm2, arm2, joint2Angle);
         mat4.translate(arm2, arm2, [1.2, 0.0, 0]);
-        mat4.scale(arm2, arm2, [1, 1, 1]);
+        const arm2bk = mat4.clone(arm2);
+        mat4.scale(arm2, arm2, [1, 0.3, 0.3]);
         drawCube(gl, arm2, lightPos);
+        arm2 = arm2bk;
 
         // Joint 3 - Arm segment 3
         const joint3 = mat4.clone(arm2);
         mat4.translate(joint3, joint3, [1.2, 0, 0]);
-        mat4.scale(joint3, joint3, [0.2, 0.6, 1]);
+        mat4.scale(joint3, joint3, [0.2, 0.2, 0.3]);
         mat4.rotateZ(joint3, joint3, joint3Angle);
         drawCube(gl,joint3, lightPos);
 
         const arm3 = mat4.clone(arm2);
         mat4.translate(arm3, arm3, [1.2, 0, 0]);
         mat4.rotateZ(arm3, arm3, joint3Angle);
-        mat4.translate(arm3, arm3, [1.1, 0, 0]);
+        mat4.translate(arm3, arm3, [1.2, 0, 0]);
+        mat4.scale(arm3, arm3, [1, 0.3, 0.3]);
         drawCube(gl, arm3, lightPos);
 
         //================= Object (3 parts connected) =================
