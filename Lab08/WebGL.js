@@ -76,6 +76,8 @@ var FSHADER_QUAD_SOURCE = `
     uniform sampler2D u_ShadowMap;
     void main(){ 
       //TODO-2: look up the depth from u_ShaodowMap and draw on quad (just one line)
+      float depth = texture2D(u_ShadowMap, gl_FragCoord.xy / vec2(800, 800)).r;
+      gl_FragColor = vec4(vec3(depth), 1.0);  // grayscale
     }
 `;
 
@@ -311,10 +313,23 @@ function draw(){
   }else{
     //TODO-1:
     //draw the shadow map (the quad)
+    gl.useProgram(quadProgram);
+    
     //active the quadProgram
     //switch the destination back to normal canvas color buffer
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    initAttributeVariable(gl, quadProgram.a_Position, quadObj.vertexBuffer);
+
     //pass fbo.texture into the quadProgram
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, fbo.texture);
+    gl.uniform1i(quadProgram.u_ShadowMap, 0); // texture unit 0
+
     //draw the quad ()
+    gl.drawArrays(gl.TRIANGLES, 0, quadObj.numVertices);
   }
 }
 
