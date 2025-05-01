@@ -242,22 +242,6 @@ async function main()
     gl.enable(gl.DEPTH_TEST);
 
     draw();
-
-    // canvas.onmousedown = function(ev){mouseDown(ev)};
-    // canvas.onmousemove = function(ev){mouseMove(ev)};
-    // canvas.onmouseup = function(ev){mouseUp(ev)};
-
-    // var slider1 = document.getElementById("move");
-    // slider1.oninput = function() {
-    //     moveDistance = this.value/60.0
-    //     draw();
-    // }
-
-    // var slider2 = document.getElementById("rotate");
-    // slider2.oninput = function() {
-    //     rotateAngle = this.value 
-    //     draw();
-    // }
 }
 
 /////Call drawOneObject() here to draw all object one by one 
@@ -281,8 +265,6 @@ function draw()
 function drawOneObject(obj, mdlMatrix, colorR, colorG, colorB)
 {
     //model Matrix (part of the mvp matrix)
-    // modelMatrix.setRotate(angleY, 1, 0, 0);//for mouse rotation
-    // modelMatrix.rotate(angleX, 0, 1, 0);//for mouse rotation
     modelMatrix.multiply(mdlMatrix);
     //mvp: projection * view * model matrix  
     mvpMatrix.setPerspective(25, 1, 1, 100);
@@ -458,36 +440,4 @@ function parseOBJ(text)
     geometries,
     materialLibs,
   };
-}
-
-function mouseDown(ev){ 
-    var x = ev.clientX;
-    var y = ev.clientY;
-    var rect = ev.target.getBoundingClientRect();
-    if( rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom){
-        mouseLastX = x;
-        mouseLastY = y;
-        mouseDragging = true;
-    }
-}
-
-function mouseUp(ev){ 
-    mouseDragging = false;
-}
-
-function mouseMove(ev){ 
-    var x = ev.clientX;
-    var y = ev.clientY;
-    if( mouseDragging ){
-        var factor = 100/canvas.height; //100 determine the spped you rotate the object
-        var dx = factor * (x - mouseLastX);
-        var dy = factor * (y - mouseLastY);
-
-        angleX += dx; //yes, x for y, y for x, this is right
-        angleY += dy;
-    }
-    mouseLastX = x;
-    mouseLastY = y;
-
-    draw();
 }
