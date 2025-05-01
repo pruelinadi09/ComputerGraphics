@@ -45,6 +45,13 @@ let objY = 0;
 let obj2Angle = 0;
 let obj3Angle = 0;
 
+//view rotation==============
+let isDragging = false;
+let lastX = 0;
+let lastY = 0;
+let rotationX = 0;
+let rotationY = 0;
+
 function main() {
     const canvas = document.getElementById("glcanvas");
     const gl = canvas.getContext("webgl");
@@ -72,6 +79,23 @@ function main() {
     // Perspective projection
     const projectionMatrix = mat4.create();
     mat4.perspective(projectionMatrix, Math.PI / 4, canvas.width / canvas.height, 0.1, 100);
+
+    //camera rotation
+    canvas.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+    });
+    canvas.addEventListener("mouseup", () => isDragging = false);
+    canvas.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        let dx = e.clientX - lastX;
+        let dy = e.clientY - lastY;
+        rotationY += dx * 0.01;
+        rotationX += dy * 0.01;
+        lastX = e.clientX;
+        lastY = e.clientY;
+    });
 
     // Define cube
     const cube = createCube(gl);
@@ -104,6 +128,11 @@ function main() {
 
         const view = mat4.create();
         mat4.lookAt(view, [0, 8, 35/zoom], [0, 0, 0], [0, 1, 0]);
+
+        const worldRotation = mat4.create();
+        mat4.rotateX(worldRotation, worldRotation, rotationX);
+        mat4.rotateY(worldRotation, worldRotation, rotationY);
+        mat4.multiply(view, view, worldRotation);
 
         const lightPos = [2, 4, 2];
 
