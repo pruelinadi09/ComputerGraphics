@@ -138,29 +138,43 @@ function main() {
         drawCube(gl,joint1, lightPos);
 
         const arm1 = mat4.clone(carBase);
-        mat4.translate(arm1, arm1, [2.9, 1.7, 0]);
+        mat4.translate(arm1, arm1, [1.7, 1.7, 0]);
+        mat4.rotateZ(arm1, arm1, joint1Angle);
+        mat4.translate(arm1, arm1, [1.2, 0.0, 0]);
         mat4.scale(arm1, arm1, [1, 0.3, 0.3]);
         drawCube(gl, arm1, lightPos);
 
         // Joint 2 - Arm segment 2
-        const joint2 = mat4.clone(joint1);
-        mat4.translate(joint2, joint2, [12, 0, 0]);
+        const joint2 = mat4.clone(arm1);
+        mat4.translate(joint2, joint2, [1.2, 0, 0]);
+        mat4.scale(joint2, joint2, [0.2, 0.6, 1]);
         mat4.rotateZ(joint2, joint2, joint2Angle);
         drawCube(gl,joint2, lightPos);
 
         const arm2 = mat4.clone(arm1);
-        mat4.translate(arm2, arm2, [2.4, 0, 0]);
+        mat4.translate(arm2, arm2, [1.2, 0, 0]);
+        mat4.rotateZ(arm2, arm2, joint2Angle);
+        mat4.translate(arm2, arm2, [1.2, 0.0, 0]);
+        mat4.scale(arm2, arm2, [1, 1, 1]);
         drawCube(gl, arm2, lightPos);
 
         // Joint 3 - Arm segment 3
-        const joint3 = mat4.clone(joint2);
-        mat4.translate(joint3, joint3, [12., 0, 0]);
+        const joint3 = mat4.clone(arm2);
+        mat4.translate(joint3, joint3, [1.2, 0, 0]);
+        mat4.scale(joint3, joint3, [0.2, 0.6, 1]);
         mat4.rotateZ(joint3, joint3, joint3Angle);
         drawCube(gl,joint3, lightPos);
 
         const arm3 = mat4.clone(arm2);
-        mat4.translate(arm3, arm3, [2.3, 0, 0]);
+        mat4.translate(arm3, arm3, [1.2, 0, 0]);
+        mat4.rotateZ(arm3, arm3, joint3Angle);
+        mat4.translate(arm3, arm3, [1.1, 0, 0]);
         drawCube(gl, arm3, lightPos);
+
+        // mat4.translate(arm1, arm1, [1.7, 1.7, 0]);
+        // mat4.rotateZ(arm1, arm1, joint1Angle);
+        // mat4.translate(arm1, arm1, [1.2, 0.0, 0]);
+        // mat4.scale(arm1, arm1, [1, 0.3, 0.3]);
 
         //================= Object (3 parts connected) =================
         // const obj1 = mat4.clone(view);
@@ -260,9 +274,9 @@ function createCube(gl) {
 function setupUI() {
     document.getElementById("robotX").oninput = e => { carX = parseInt(e.target.value); main(); };
     document.getElementById("robotY").oninput = e => { carY = parseInt(e.target.value); main(); };
-    document.getElementById("joint1").oninput = e => { jointAngles[0] = parseInt(e.target.value); main(); };
-    document.getElementById("joint2").oninput = e => { jointAngles[1] = parseInt(e.target.value); main(); };
-    document.getElementById("joint3").oninput = e => { jointAngles[2] = parseInt(e.target.value); main(); };
+    document.getElementById("joint1").oninput = e => { joint1Angle = parseInt(e.target.value); main(); console.log(joint1Angle);};
+    document.getElementById("joint2").oninput = e => { joint2Angle = parseInt(e.target.value); main(); };
+    document.getElementById("joint3").oninput = e => { joint3Angle = parseInt(e.target.value); main(); };
     document.getElementById("grabBtn").onclick = () => { grabbed = true; main(); };
     document.getElementById("releaseBtn").onclick = () => { grabbed = false; main(); };
     document.getElementById("zoomIn").onclick = () => { zoom *= 1.1; main(); };
