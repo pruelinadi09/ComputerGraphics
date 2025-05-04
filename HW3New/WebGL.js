@@ -34,6 +34,7 @@ void main(void) {
 }
 `;
 
+// =========== robot ===========
 let carX = 0;
 let carY = 0;
 let zoom = 1;
@@ -45,12 +46,18 @@ let objY = 0;
 let obj2Angle = 0;
 let obj3Angle = 0;
 
-//view rotation==============
+//======== view rotation ========
 let isDragging = false;
 let lastX = 0;
 let lastY = 0;
 let rotationX = 0;
 let rotationY = 0;
+
+// ===== grabbing function ======
+const grabThreshold = 1;
+let isGrabbable = false;
+let isHolding = false;
+let grab = false;
 
 function main() {
     const canvas = document.getElementById("glcanvas");
@@ -202,30 +209,60 @@ function main() {
         mat4.rotateZ(joint3, joint3, joint3Angle);
         drawCube(gl,joint3, lightPos);
 
-        const arm3 = mat4.clone(arm2);
+        let arm3 = mat4.clone(arm2);
         mat4.translate(arm3, arm3, [1.2, 0, 0]);
         mat4.rotateZ(arm3, arm3, joint3Angle);
         mat4.translate(arm3, arm3, [1.2, 0, 0]);
+        const arm3bk = mat4.clone(arm3);
         mat4.scale(arm3, arm3, [1, 0.3, 0.3]);
         drawCube(gl, arm3, lightPos);
+        arm3 = arm3bk;
 
         //================= Object (3 parts connected) =================
-        const obj1 = mat4.clone(view);
-        mat4.translate(obj1, obj1, [objX+5, objY, 5]);
+        let obj1 = mat4.clone(view);
+        mat4.translate(obj1, obj1, [objX+5, 0, objY+5]);
         drawCube(gl, obj1, lightPos);
 
-        const obj2 = mat4.clone(obj1);
+        let obj2 = mat4.clone(obj1);
         mat4.translate(obj2, obj2, [0, 1.7, 0]);
         mat4.scale(obj2, obj2, [0.7, 0.7, 0.5]);
         mat4.rotateY(obj2, obj2, obj2Angle);
         drawCube(gl, obj2, lightPos);
 
-        const obj3 = mat4.clone(obj2);
+        let obj3 = mat4.clone(obj2);
         mat4.translate(obj3, obj3, [0, 1.6, 0]);
         mat4.scale(obj3, obj3, [0.5, 0.5, 0.5]);
         mat4.rotateY(obj3, obj3, obj3Angle);
         drawCube(gl, obj3, lightPos);
 
+        // requestAnimationFrame(render);
+
+        // ============== grab function ================
+        function distance(x1, y1, x2, y2) {
+            return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+        }
+
+        // Check proximity
+        const dist1 = distance(arm3[12], arm3[13], obj1[12], obj2[13]);
+        const dist2 = distance(arm3[12], arm3[13], obj2[12], obj2[13]);
+        const dist3 = distance(arm3[12], arm3[13], obj3[12], obj3[13]);
+        isGrabbable = dist1 < grabThreshold || dist2 < grabThreshold;
+
+        if(isGrabbable && grab)
+        {
+            isHolding = true;
+        }
+        else
+        {
+            isHolding = false;
+        }
+
+        console.log(isHolding);
+        console.log(objX);
+        console.log(objY);
+        console.log(arm3[12]);
+        console.log(arm3[13]);
+        
         requestAnimationFrame(render);
     }
 
@@ -306,15 +343,15 @@ function createCube(gl) {
 }
 
 function setupUI() {
-    document.getElementById("robotX").oninput = e => { carX = parseInt(e.target.value); main(); };
-    document.getElementById("robotY").oninput = e => { carY = parseInt(e.target.value); main(); };
+    document.getElementById("robotX").oninput = e => { carX = parseInt(e.target.value); if(isHolding){objX=parseInt(e.target.value)}; main(); };
+    document.getElementById("robotY").oninput = e => { carY = parseInt(e.target.value); if(isHolding){objY+=parseInt(e.target.value)}; main(); };
     document.getElementById("joint1").oninput = e => { joint1Angle = parseInt(e.target.value); main();};
     document.getElementById("joint2").oninput = e => { joint2Angle = parseInt(e.target.value); main(); };
     document.getElementById("joint3").oninput = e => { joint3Angle = parseInt(e.target.value); main(); };
     document.getElementById("obj2").oninput = e => { obj2Angle = parseInt(e.target.value); main(); };
     document.getElementById("obj3").oninput = e => { obj3Angle = parseInt(e.target.value); main(); };
-    document.getElementById("grabBtn").onclick = () => { grabbed = true; main(); };
-    document.getElementById("releaseBtn").onclick = () => { grabbed = false; main(); };
+    document.getElementById("grabBtn").onclick = () => { grab = true; main(); };
+    document.getElementById("releaseBtn").onclick = () => { grab = false; main(); };
     document.getElementById("zoomIn").onclick = () => { zoom *= 1.1; main(); };
     document.getElementById("zoomOut").onclick = () => { zoom *= 0.9; main(); };
 }
