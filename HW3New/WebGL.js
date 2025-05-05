@@ -57,7 +57,6 @@ let rotationY = 0;
 const grabThreshold = 1;
 let isGrabbable = false;
 let isHolding = false;
-// let grab = false;
 
 function main() {
     const canvas = document.getElementById("glcanvas");
@@ -235,8 +234,6 @@ function main() {
         mat4.rotateY(obj3, obj3, obj3Angle);
         drawCube(gl, obj3, lightPos);
 
-        // requestAnimationFrame(render);
-
         // ============== grab function ================
         function distance(x1, y1, x2, y2) {
             return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
@@ -247,21 +244,6 @@ function main() {
         const dist2 = distance(arm3[12], arm3[13], obj2[12], obj2[13]);
         const dist3 = distance(arm3[12], arm3[13], obj3[12], obj3[13]);
         isGrabbable = dist1 < grabThreshold || dist2 < grabThreshold;
-
-        // if(isGrabbable && grab)
-        // {
-        //     isHolding = true;
-        // }
-        // else
-        // {
-        //     isHolding = false;
-        // }
-
-        console.log(isHolding);
-        console.log(objX);
-        console.log(objY);
-        console.log(arm3[12]);
-        console.log(arm3[13]);
         
         requestAnimationFrame(render);
     }
