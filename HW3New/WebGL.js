@@ -222,17 +222,33 @@ function main() {
         mat4.translate(obj1, obj1, [objX+5, 0, objY+5]);
         drawCube(gl, obj1, lightPos);
 
+        let objJoint1 = mat4.clone(obj1);
+        mat4.translate(objJoint1, objJoint1, [0, 1.3, 0]);
+        mat4.rotateY(objJoint1, objJoint1, obj2Angle);
+        mat4.scale(objJoint1, objJoint1, [0.3, 0.3, 0.3]);
+        drawCube(gl, objJoint1, lightPos);
+
         let obj2 = mat4.clone(obj1);
-        mat4.translate(obj2, obj2, [0, 1.7, 0]);
+        mat4.translate(obj2, obj2, [0, 2, 0]);
+        let obj2Bk = mat4.clone(obj2);
         mat4.scale(obj2, obj2, [0.7, 0.7, 0.5]);
         mat4.rotateY(obj2, obj2, obj2Angle);
         drawCube(gl, obj2, lightPos);
+        obj2 = obj2Bk;
+
+        let objJoint2 = mat4.clone(obj2);
+        mat4.translate(objJoint2, objJoint2, [0, 1, 0]);
+        mat4.rotateY(objJoint2, objJoint2, obj3Angle);
+        mat4.scale(objJoint2, objJoint2, [0.3, 0.3, 0.3]);
+        drawCube(gl, objJoint2, lightPos);
 
         let obj3 = mat4.clone(obj2);
         mat4.translate(obj3, obj3, [0, 1.6, 0]);
+        let obj3Bk = mat4.clone(obj3);
         mat4.scale(obj3, obj3, [0.5, 0.5, 0.5]);
         mat4.rotateY(obj3, obj3, obj3Angle);
         drawCube(gl, obj3, lightPos);
+        obj3 = obj3Bk;
 
         // ============== grab function ================
         function distance(x1, y1, x2, y2) {
@@ -243,7 +259,7 @@ function main() {
         const dist1 = distance(arm3[12], arm3[13], obj1[12], obj2[13]);
         const dist2 = distance(arm3[12], arm3[13], obj2[12], obj2[13]);
         const dist3 = distance(arm3[12], arm3[13], obj3[12], obj3[13]);
-        isGrabbable = dist1 < grabThreshold || dist2 < grabThreshold;
+        isGrabbable = dist1 < grabThreshold || dist2 < grabThreshold || dist3 < grabThreshold;
         
         requestAnimationFrame(render);
     }
