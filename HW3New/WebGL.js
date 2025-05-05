@@ -57,7 +57,7 @@ let rotationY = 0;
 const grabThreshold = 1;
 let isGrabbable = false;
 let isHolding = false;
-let grab = false;
+// let grab = false;
 
 function main() {
     const canvas = document.getElementById("glcanvas");
@@ -248,14 +248,14 @@ function main() {
         const dist3 = distance(arm3[12], arm3[13], obj3[12], obj3[13]);
         isGrabbable = dist1 < grabThreshold || dist2 < grabThreshold;
 
-        if(isGrabbable && grab)
-        {
-            isHolding = true;
-        }
-        else
-        {
-            isHolding = false;
-        }
+        // if(isGrabbable && grab)
+        // {
+        //     isHolding = true;
+        // }
+        // else
+        // {
+        //     isHolding = false;
+        // }
 
         console.log(isHolding);
         console.log(objX);
@@ -344,14 +344,14 @@ function createCube(gl) {
 
 function setupUI() {
     document.getElementById("robotX").oninput = e => { carX = parseInt(e.target.value); if(isHolding){objX=parseInt(e.target.value)}; main(); };
-    document.getElementById("robotY").oninput = e => { carY = parseInt(e.target.value); if(isHolding){objY+=parseInt(e.target.value)}; main(); };
+    document.getElementById("robotY").oninput = e => { carY = parseInt(e.target.value); if(isHolding){objY=parseInt(e.target.value)-5}; main(); };
     document.getElementById("joint1").oninput = e => { joint1Angle = parseInt(e.target.value); main();};
     document.getElementById("joint2").oninput = e => { joint2Angle = parseInt(e.target.value); main(); };
     document.getElementById("joint3").oninput = e => { joint3Angle = parseInt(e.target.value); main(); };
     document.getElementById("obj2").oninput = e => { obj2Angle = parseInt(e.target.value); main(); };
     document.getElementById("obj3").oninput = e => { obj3Angle = parseInt(e.target.value); main(); };
-    document.getElementById("grabBtn").onclick = () => { grab = true; main(); };
-    document.getElementById("releaseBtn").onclick = () => { grab = false; main(); };
+    document.getElementById("grabBtn").onclick = () => { if(isGrabbable){isHolding = true;}else{isHolding = false;}; main(); };
+    document.getElementById("releaseBtn").onclick = () => { isHolding = false; main(); };
     document.getElementById("zoomIn").onclick = () => { zoom *= 1.1; main(); };
     document.getElementById("zoomOut").onclick = () => { zoom *= 0.9; main(); };
 }
