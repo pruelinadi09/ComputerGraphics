@@ -41,9 +41,20 @@ let zoom = 1;
 //======== camera rotation ========
 let yaw = 0;
 let pitch = 0;
-let cameraPos = [0, 2, 6];  // Start behind and slightly above
+let cameraPos = [0, 0.5, 4];  // Start behind and slightly above
 let cameraFront = [0, 0, -1];
 let cameraUp = [0, 1, 0];
+
+//======== camera movement ========
+let velocityY = 0;
+let isJumping = false;
+let moveForward = false;
+let groundY = 0.5;  // base Y position of camera when on the ground
+let gravity = -0.01;
+let jumpStrength = 0.2;
+
+let keys = {};
+
 
 function main()
 {
@@ -95,6 +106,26 @@ function main()
         render();
     });
 
+    document.addEventListener("keydown", (e) => {
+        keys[e.key.toLowerCase()] = true;
+
+        if (e.key === " " && !isJumping) {
+            velocityY = jumpStrength;
+            isJumping = true;
+        }
+        if (e.key === "w" || e.key === "ArrowUp") {
+            moveForward = true;
+        }
+    });
+
+    document.addEventListener("keyup", (e) => {
+        keys[e.key.toLowerCase()] = false;
+        if (e.key === "w" || e.key === "ArrowUp") {
+            moveForward = false;
+        }
+    });
+
+
     function updateCamera(e) {
         const sensitivity = 0.002;
         yaw += e.movementX * sensitivity;
@@ -104,11 +135,13 @@ function main()
         if (pitch > Math.PI / 2) pitch = Math.PI / 2;
         if (pitch < -Math.PI / 2) pitch = -Math.PI / 2;
 
-        cameraFront = [
+        const front = [
             Math.cos(pitch) * Math.sin(yaw),
             Math.sin(pitch),
             -Math.cos(pitch) * Math.cos(yaw)
         ];
+        const length = Math.hypot(front[0], front[1], front[2]);
+        cameraFront = front.map(c => c / length);
     }
 
     // Define cube
@@ -139,6 +172,23 @@ function main()
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        // Movement forward
+        if (moveForward) {
+            const speed = 0.05;
+            cameraPos[0] += cameraFront[0] * speed;
+            cameraPos[2] += cameraFront[2] * speed;
+        }
+
+        // Jumping mechanics
+        if (isJumping) {
+            jumpVelocity += gravity;
+            cameraPos[1] += jumpVelocity;
+            if (cameraPos[1] <= 0.5) {  // ground level
+                cameraPos[1] = 0.5;
+                isJumping = false;
+                jumpVelocity = 0;
+            }
+        }
         const view = mat4.create();
         const zoomedCameraPos = [
             cameraPos[0] * zoom,
@@ -161,7 +211,7 @@ function main()
         drawCube(gl, lightMat, lightPos);
 
         // Draw 3x3 ground cubes
-        const spacing = 5;
+        const spacing = 4;
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 const cubeMat = mat4.clone(view);
@@ -170,6 +220,18 @@ function main()
                 drawCube(gl, cubeMat, lightPos);
             }
         }
+
+        // Apply gravity and jumping
+        cameraPos[1] += velocityY;
+        velocityY += gravity;
+
+        // Clamp to ground
+        if (cameraPos[1] <= groundY) {
+            cameraPos[1] = groundY;
+            velocityY = 0;
+            isJumping = false;
+        }
+
 
         requestAnimationFrame(render);
     }
