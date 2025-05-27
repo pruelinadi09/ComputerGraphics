@@ -49,11 +49,14 @@ let cameraUp = [0, 1, 0];
 let velocityY = 0;
 let isJumping = false;
 let moveForward = false;
-let groundY = 0.5;  // base Y position of camera when on the ground
+let groundY = 0;  // base Y position of camera when on the ground
 let gravity = -0.01;
-let jumpStrength = 0.2;
+let jumpStrength = 0.4;
+let jumpVelocity = 0;
 
 let keys = {};
+
+let hasFallen = false;
 
 
 function main()
@@ -168,13 +171,21 @@ function main()
     }
 
     function render() {
+        if (hasFallen) {
+            if (!window._gameOverShown) {
+                alert("Game Over! You fell.");
+                window._gameOverShown = true;
+            }
+            return;
+        }
+
         gl.clearColor(0, 0, 0, 1);
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         // Movement forward
         if (moveForward) {
-            const speed = 0.05;
+            const speed = isJumping ? 0.15 : 0.05;
             cameraPos[0] += cameraFront[0] * speed;
             cameraPos[2] += cameraFront[2] * speed;
         }
@@ -183,12 +194,17 @@ function main()
         if (isJumping) {
             jumpVelocity += gravity;
             cameraPos[1] += jumpVelocity;
-            if (cameraPos[1] <= 0.5) {  // ground level
-                cameraPos[1] = 0.5;
+            if (cameraPos[1] <= 0) {  // ground level
+                cameraPos[1] = 0;
                 isJumping = false;
                 jumpVelocity = 0;
             }
         }
+        // Check if player is standing on any cube
+        if (!isPlayerOnAnyCube(cameraPos[0], cameraPos[2]) && !isJumping) {
+            hasFallen = true;
+        }
+
         const view = mat4.create();
         const zoomedCameraPos = [
             cameraPos[0] * zoom,
@@ -232,6 +248,8 @@ function main()
             isJumping = false;
         }
 
+        console.log(cameraPos[0], cameraPos[1], cameraPos[2]);
+        console.log(isJumping);
 
         requestAnimationFrame(render);
     }
@@ -311,4 +329,24 @@ function createCube(gl) {
 
     return { vbo, ebo, indices };
 }
+
+function isPlayerOnAnyCube(cameraX, cameraZ) {
+    const spacing = 4;
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            const centerX = i * spacing;
+            const centerZ = j * spacing;
+            const halfSize = 1.5;
+
+            if (
+                cameraX > centerX - halfSize && cameraX <= centerX + halfSize &&
+                cameraZ > centerZ - halfSize && cameraZ <= centerZ + halfSize
+            ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 main();
