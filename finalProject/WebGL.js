@@ -35,6 +35,25 @@ void main(void) {
 }
 `;
 
+const rainVertexShaderSrc = `
+attribute vec3 aPosition;
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+void main() {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+    gl_PointSize = 2.0;
+}
+`;
+const rainFragmentShaderSrc = `
+precision mediump float;
+uniform vec3 uColor;
+
+void main() {
+    gl_FragColor = vec4(uColor, 1.0);
+}
+
+`;
+
 //======== view rotation ========
 
 let zoom = 1;
@@ -59,6 +78,10 @@ let keys = {};
 
 let hasFallen = false;
 let isFirstPersonView = true;
+
+//======== rain background ========
+let rainParticles = [];
+let rainCount = 1000;
 
 
 function main()
@@ -231,6 +254,64 @@ function main()
         gl.drawElements(gl.TRIANGLES, cube.indices.length, gl.UNSIGNED_SHORT, 0);
     }
 
+    //rain
+    const rainVS = compileShader(gl, rainVertexShaderSrc, gl.VERTEX_SHADER);
+    const rainFS = compileShader(gl, rainFragmentShaderSrc, gl.FRAGMENT_SHADER);
+    const rainProgram = createProgram(gl, rainVS, rainFS);
+
+    for (let i = 0; i < rainCount; i++) {
+        rainParticles.push({
+            x: (Math.random() - 0.5) * 50,
+            y: Math.random() * 50,
+            z: (Math.random() - 0.5) * 50,
+            speed: 0.1 + Math.random() * 0.2
+        });
+    }
+    function updateRain() {
+        for (let drop of rainParticles) {
+            drop.y -= drop.speed;
+            if (drop.y < 0) {
+                drop.y = 50;
+            }
+        }
+    }
+
+    const rainPositions = new Float32Array(rainParticles.length * 3);
+
+    function renderRain(viewMatrix) {
+        gl.useProgram(rainProgram);
+
+        const uModelViewMatrix = gl.getUniformLocation(rainProgram, "uModelViewMatrix");
+        const uProjectionMatrix = gl.getUniformLocation(rainProgram, "uProjectionMatrix");
+        const uColor = gl.getUniformLocation(rainProgram, "uColor");
+
+        for (let i = 0; i < rainParticles.length; i++) {
+            const p = rainParticles[i];
+            rainPositions[i * 3] = p.x;
+            rainPositions[i * 3 + 1] = p.y;
+            rainPositions[i * 3 + 2] = p.z;
+        }
+
+        const rainBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, rainBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, rainPositions, gl.DYNAMIC_DRAW);
+
+        const a_Position = gl.getAttribLocation(rainProgram, "aPosition");
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_Position);
+
+        gl.depthMask(false);
+        gl.disable(gl.DEPTH_TEST);  
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(rainProgram, "uModelViewMatrix"), false, viewMatrix);
+        gl.uniformMatrix4fv(gl.getUniformLocation(rainProgram, "uProjectionMatrix"), false, projectionMatrix);
+        gl.uniform3fv(uColor, [0.5, 0.5, 1]);
+
+        gl.drawArrays(gl.POINTS, 0, rainParticles.length);
+        gl.depthMask(true);
+        gl.enable(gl.DEPTH_TEST);
+    }
+
 
     function render() {
         if (hasFallen) {
@@ -296,6 +377,11 @@ function main()
 
             drawArielCharacter(gl, characterMat, lightPos, view);
         }
+
+        // 🚨 RENDER RAIN FIRST
+        updateRain();
+        renderRain(view);
+        gl.useProgram(program);
 
         // Draw light
         const lightMat = mat4.clone(view);
