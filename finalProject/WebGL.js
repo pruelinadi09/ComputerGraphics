@@ -1,6 +1,8 @@
 const vertexShaderSrc = `
 attribute vec4 aPosition;
 attribute vec3 aNormal;
+attribute vec2 a_TexCoord;
+varying vec2 v_TexCoord;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -12,6 +14,7 @@ varying vec3 vLighting;
 
 void main(void) {
     gl_Position = uProjectionMatrix * uModelViewMatrix * aPosition;
+    v_TexCoord = a_TexCoord;
 
     vec3 ambientLight = vec3(0.2, 0.2, 0.2);
     vec3 directionalLightColor = vec3(1, 1, 1);
@@ -29,9 +32,12 @@ const fragmentShaderSrc = `
 precision mediump float;
 varying vec3 vLighting;
 uniform vec3 uColor;
+varying vec2 v_TexCoord;
+uniform sampler2D uSampler;
 
 void main(void) {
-    gl_FragColor = vec4(uColor * vLighting, 1.0);
+    vec4 texColor = texture2D(uSampler, v_TexCoord);
+    gl_FragColor = vec4(uColor * vLighting, texColor.a);
 }
 `;
 

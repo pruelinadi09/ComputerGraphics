@@ -1,15 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Floating Island Mini Game</title>
   <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    canvas {
+      flex: 1 0 auto;
+      display: block;
+      width: 50%;
+      height: 50%;
+      margin: 0 auto;
+    }
+    #info {
+      flex: 0 0 auto;
+      padding: 10px;
+      background: #222;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <canvas id="glcanvas" style="height: 50%;width: 50%;"></canvas>
+  <canvas id="glcanvas"></canvas>
+
+  <div id="info">
+    <p><strong>Floating Island Mini Game</strong><br />
+      Explore the floating islands and enjoy the immersive 3D environment.<br />
+      <em>How to play:</em> Use up arrow key or 'W' to move forward. Use space bar to jump. Use 'V' to change camera view
+      <br>Click inside the scene and move your mouse around to rotate. Use esc to exit rotate mode.</p>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/gl-matrix@2.8.1/dist/gl-matrix-min.js"></script>
   <script src="cuon-matrix.js"></script>
   <script type="module" src="WebGL.js"></script>
