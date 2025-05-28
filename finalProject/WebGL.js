@@ -28,9 +28,10 @@ void main(void) {
 const fragmentShaderSrc = `
 precision mediump float;
 varying vec3 vLighting;
+uniform vec3 uColor;
 
 void main(void) {
-    gl_FragColor = vec4(vLighting, 1.0);
+    gl_FragColor = vec4(uColor * vLighting, 1.0);
 }
 `;
 
@@ -57,6 +58,7 @@ let jumpVelocity = 0;
 let keys = {};
 
 let hasFallen = false;
+let isFirstPersonView = true;
 
 
 function main()
@@ -82,6 +84,7 @@ function main()
     const uProjectionMatrix = gl.getUniformLocation(program, "uProjectionMatrix");
     const uNormalMatrix = gl.getUniformLocation(program, "uNormalMatrix");
     const uLightPosition = gl.getUniformLocation(program, "uLightPosition");
+    const uColor = gl.getUniformLocation(program, 'uColor');
 
     // Perspective projection
     const projectionMatrix = mat4.create();
@@ -128,6 +131,14 @@ function main()
         }
     });
 
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'v' || e.key === 'V') {
+            isFirstPersonView = !isFirstPersonView;
+            // console.log('Perspective changed:', isFirstPersonView ? 'First Person' : 'Third Person');
+        }
+    });
+
+
 
     function updateCamera(e) {
         const sensitivity = 0.002;
@@ -159,6 +170,7 @@ function main()
         gl.uniformMatrix4fv(uProjectionMatrix, false, projectionMatrix);
         gl.uniformMatrix4fv(uNormalMatrix, false, normalMatrix);
         gl.uniform3fv(uLightPosition, lightPos);
+        gl.uniform3fv(uColor, [1, 1, 1]);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, cube.vbo);
         gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 24, 0);
@@ -169,6 +181,56 @@ function main()
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.ebo);
         gl.drawElements(gl.TRIANGLES, cube.indices.length, gl.UNSIGNED_SHORT, 0);
     }
+
+    function drawArielCharacter(gl, baseMat, lightPos, view) {
+        const torso = mat4.clone(baseMat);
+        mat4.translate(torso, torso, [0, 1.0, 0]);  // move torso up
+        mat4.scale(torso, torso, [0.4, 0.6, 0.2]);  // scale to torso shape
+        drawColoredCube(gl, torso, lightPos, [1.0, 0.5, 0.6], view, cube); // pinkish skin tone
+
+        const hair = mat4.clone(baseMat);
+        mat4.translate(hair, hair, [0, 1.6, 0]); // head level
+        mat4.scale(hair, hair, [0.5, 0.4, 0.4]);
+        drawColoredCube(gl, hair, lightPos, [1.0, 0.0, 0.4], view, cube); // Ariel's red hair
+
+        const tail = mat4.clone(baseMat);
+        mat4.translate(tail, tail, [0, -0.5, 0]);
+        mat4.scale(tail, tail, [0.4, 0.5, 0.2]);
+        drawColoredCube(gl, tail, lightPos, [0.0, 0.8, 0.6], view, cube); // green tail
+    }
+
+    function drawColoredCube(gl, modelMatrix, lightPos, color, viewMatrix, cube) {
+        gl.useProgram(program);
+
+        const modelViewMatrix = mat4.create();
+        mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
+
+        const normalMatrix = mat4.create();
+        mat4.invert(normalMatrix, modelViewMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'uModelViewMatrix'), false, modelViewMatrix);
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'uProjectionMatrix'), false, projectionMatrix);
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'uNormalMatrix'), false, normalMatrix);
+        gl.uniform3fv(gl.getUniformLocation(program, 'uLightPosition'), lightPos);
+        gl.uniform3fv(gl.getUniformLocation(program, 'uColor'), color);
+
+        // Bind VBO
+        gl.bindBuffer(gl.ARRAY_BUFFER, cube.vbo);
+        const a_Position = gl.getAttribLocation(program, 'aPosition');
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_Position);
+
+        // Bind normals
+        const a_Normal = gl.getAttribLocation(program, 'aNormal');
+        gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_Normal);
+
+        // Bind EBO and draw
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.ebo);
+        gl.drawElements(gl.TRIANGLES, cube.indices.length, gl.UNSIGNED_SHORT, 0);
+    }
+
 
     function render() {
         if (hasFallen) {
@@ -183,21 +245,23 @@ function main()
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        // Movement forward
-        if (moveForward) {
-            const speed = isJumping ? 0.15 : 0.05;
-            cameraPos[0] += cameraFront[0] * speed;
-            cameraPos[2] += cameraFront[2] * speed;
-        }
+        if (isFirstPersonView) {
+            // Movement forward
+            if (moveForward) {
+                const speed = isJumping ? 0.15 : 0.05;
+                cameraPos[0] += cameraFront[0] * speed;
+                cameraPos[2] += cameraFront[2] * speed;
+            }
 
-        // Jumping mechanics
-        if (isJumping) {
-            jumpVelocity += gravity;
-            cameraPos[1] += jumpVelocity;
-            if (cameraPos[1] <= 0) {  // ground level
-                cameraPos[1] = 0;
-                isJumping = false;
-                jumpVelocity = 0;
+            // Jumping mechanics
+            if (isJumping) {
+                jumpVelocity += gravity;
+                cameraPos[1] += jumpVelocity;
+                if (cameraPos[1] <= 0) {
+                    cameraPos[1] = 0;
+                    isJumping = false;
+                    jumpVelocity = 0;
+                }
             }
         }
         // Check if player is standing on any cube
@@ -205,20 +269,33 @@ function main()
             hasFallen = true;
         }
 
-        const view = mat4.create();
-        const zoomedCameraPos = [
-            cameraPos[0] * zoom,
-            cameraPos[1] * zoom,
-            cameraPos[2] * zoom,
-        ];
-        const center = [
-            cameraPos[0] + cameraFront[0],
-            cameraPos[1] + cameraFront[1],
-            cameraPos[2] + cameraFront[2]
-        ];
-        mat4.lookAt(view, zoomedCameraPos, center, cameraUp);
-
         const lightPos = [2, 4, 2];
+        const view = mat4.create();
+
+        if (isFirstPersonView) {
+            const zoomedCameraPos = [
+                cameraPos[0] * zoom,
+                cameraPos[1] * zoom,
+                cameraPos[2] * zoom,
+            ];
+            const center = [
+                cameraPos[0] + cameraFront[0],
+                cameraPos[1] + cameraFront[1],
+                cameraPos[2] + cameraFront[2]
+            ];
+            mat4.lookAt(view, zoomedCameraPos, center, cameraUp);
+        } else {
+            // Fixed third-person camera view
+            const thirdPersonCamPos = [0, 10, 10];
+            const target = [0, 0, 0];
+            mat4.lookAt(view, thirdPersonCamPos, target, cameraUp);
+
+            const characterMat = mat4.create();
+            mat4.translate(characterMat, characterMat, cameraPos);
+            mat4.scale(characterMat, characterMat, [0.5, 1, 0.5]); // scale to human-ish size
+
+            drawArielCharacter(gl, characterMat, lightPos, view);
+        }
 
         // Draw light
         const lightMat = mat4.clone(view);
@@ -248,8 +325,8 @@ function main()
             isJumping = false;
         }
 
-        console.log(cameraPos[0], cameraPos[1], cameraPos[2]);
-        console.log(isJumping);
+        // console.log(cameraPos[0], cameraPos[1], cameraPos[2]);
+        // console.log(isJumping);
 
         requestAnimationFrame(render);
     }
