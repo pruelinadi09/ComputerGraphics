@@ -212,7 +212,10 @@ function main(){
             ///// TODO: when the user press 'g' or 'G'
             /////       1. consider whether the triangle corner and the circle touch each other
             /////       2. consider if the circle be grabbed by the triangle corner
-            if (canGrab) {
+            if (grab) {
+                grab = false;
+            }
+            else if (canGrab) {
                 console.log("Grabbing circle!");
                 grab = true; // Set flag for grabbing
             }
@@ -285,17 +288,18 @@ function draw(gl)
     ///////TODO2-hint: (x1-x2)^2 + (y1-y2)^2 <= r^2
     ////TODO3: different interaction processes for the circle and the triangle corner, there are three cases
 
+    let circleBuffer;
     if (canGrab && !grab) {
-        circleColor = circleColorsTouch; // when touching but not grabbing
+        circleBuffer = circleModelTouch; // when touching but not grabbing
     } else if (grab) {
-        circleColor = circleColorsGrab; // when grabbed
+        circleBuffer = circleModelGrab; // when grabbed
         transformMatCircle1.setTranslate(triangleCornerWorld.elements[0], triangleCornerWorld.elements[1], 0);
     } else {
-        circleColor = circleColors; // Default
+        circleBuffer = circleModel; // Default
     }
 
-    initAttributeVariable(gl, program.a_Position, circleModel.vertexBuffer);//set circle  vertex to shader varibale
-    initAttributeVariable(gl, program.a_Color, circleModel.colorBuffer); //set circle normal color to shader varibale
+    initAttributeVariable(gl, program.a_Position, circleBuffer.vertexBuffer);//set circle  vertex to shader varibale
+    initAttributeVariable(gl, program.a_Color, circleBuffer.colorBuffer); //set circle normal color to shader varibale
     gl.uniformMatrix4fv(program.u_modelMatrix, false, transformMat.elements);//pass current transformMat to shader
     gl.drawArrays(gl.TRIANGLES, 0, circleModel.numVertices);//draw the triangle 
 
