@@ -9,7 +9,7 @@ var VSHADER_SOURCE = `
 var FSHADER_SOURCE = `
         void main(){
             //gl_FragColor is key variable in GLSL (assign color of a pixel)
-            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
         }
     `;
 
@@ -85,7 +85,7 @@ function main(){
     ///// 5. prepare the vertices for draw (we just draw 2D object here)
     /////    These are vertices of a triangle in 2D
     var vertices = new Float32Array(
-        [0, 0.5, -0.5, -0.5, 0.5, -0.5]   
+        [0, -0.5, -0.5, 0.5, 0.5, 0.5]   
     );
 
     var n = 3; /// number of vertices
@@ -107,7 +107,7 @@ function main(){
     gl.enableVertexAttribArray(renderProgram.a_Position); //enable the vetex buffer
 
     ///// 6. clear the scrren by designated background color
-    gl.clearColor(0.0, 0.0, 0.0, 1.0); //background color
+    gl.clearColor(0.0, 1.0, 0.0, 1.0); //background color
     gl.clear(gl.COLOR_BUFFER_BIT); // clear
 
     ///// 7. draw the shape
