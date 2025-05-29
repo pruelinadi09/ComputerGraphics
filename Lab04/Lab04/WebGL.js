@@ -266,17 +266,13 @@ function draw(gl)
     ////TODO1: circle coordinate in world space
     transformMat = new Matrix4(transformMatCircle1);
     const circleWorld = transformMat.multiplyVector4(transformMatCircle1);
-    console.log(circleWorld);
+    let circleCenter = transformMatCircle1.multiplyVector4(new Vector4([0, 0, 0, 1]));
     ////TODO2: check whether the triangle corner and the circle touch each other
-    const dx = triangleCornerWorld.elements[0] - circleVertices[0];
-    const dy = triangleCornerWorld.elements[1] - circleVertices[1];
+    const dx = triangleCornerWorld.elements[0] - circleCenter.elements[0];
+    const dy = triangleCornerWorld.elements[1] - circleCenter.elements[1];
 
     const distanceSquared = dx * dx + dy * dy;
     const radiusSquared = circleRadius * circleRadius; // Assume circleRadius is defined
-
-    console.log(canGrab);
-    console.log(distanceSquared);
-    console.log(radiusSquared);
 
     if (distanceSquared <= radiusSquared) {
         console.log("Touch detected!");
@@ -284,18 +280,16 @@ function draw(gl)
     } else {
         canGrab = false;
     }
+    console.log('canGrab: ', canGrab, ' grab: ', grab);
 
     ///////TODO2-hint: (x1-x2)^2 + (y1-y2)^2 <= r^2
     ////TODO3: different interaction processes for the circle and the triangle corner, there are three cases
-    if (grab) {
-        circleCenter[0] = triangleCornerWorld.elements[0];
-        circleCenter[1] = triangleCornerWorld.elements[1];
-    }
 
     if (canGrab && !grab) {
         circleColor = circleColorsTouch; // when touching but not grabbing
     } else if (grab) {
         circleColor = circleColorsGrab; // when grabbed
+        transformMatCircle1.setTranslate(triangleCornerWorld.elements[0], triangleCornerWorld.elements[1], 0);
     } else {
         circleColor = circleColors; // Default
     }
